@@ -1,0 +1,141 @@
+<html>
+    <head>
+    <title>Movies</title>
+    <link rel="stylesheet" href="style.css">
+    </head>
+
+<body>
+        <div class="main">
+            <div class="navbar">
+                <div class="icon">
+                    <h2 class="logo">RozieLib</h2>
+                </div>
+                <div class="menu">
+                    <ul>
+                        <li><a href="Home.html">Home</a></li>
+                        <li><a href="About.html">About</a></li>
+                        <li><a href="Contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+           
+             <div class="photo-color">
+                <h1> Movies</h1>
+            </div>
+
+          <div class="insert">
+            <div class="card">
+                 
+                <input type="file" accept="image/jpeg, image/png, image/jpg" id="upload-photo" multiple>
+                <label for="upload-photo">Upload Movies</label>
+                <p class="upload-info">Select multiple images at once</p>
+            </div>
+            
+            
+            <div class="image-grid" id="image-grid"></div>
+            <p class="image-count" id="image-count">0 images uploaded</p>
+        </div>
+    </div>
+
+    <script>
+         
+        const fileInput = document.getElementById('upload-photo');
+        const imageGrid = document.getElementById('image-grid');
+        const imageCount = document.getElementById('image-count');
+        let uploadedImages = [];  
+
+        fileInput.addEventListener('change', function(event) {
+            const files = event.target.files;
+            
+            if (files.length > 0) {
+                 
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                          
+                            const imageItem = document.createElement('div');
+                            imageItem.className = 'image-item';
+                            imageItem.dataset.id = Date.now() + Math.random(); 
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = file.name;
+                            
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'remove-btn';
+                            removeBtn.innerHTML = '×';
+                            removeBtn.onclick = function() {
+                                imageItem.remove();
+                                updateImageCount();
+                                updateSubmitButton();
+                            };
+                            
+                         
+                            const descSection = document.createElement('div');
+                            descSection.className = 'description-section';
+                            
+                            const descLabel = document.createElement('label');
+                            descLabel.className = 'description-label';
+                            descLabel.textContent = 'Description:';
+                            
+                            const descInput = document.createElement('textarea');
+                            descInput.className = 'description-input';
+                            descInput.placeholder = 'Add a description for this photo...';
+                            descInput.rows = 2;
+                            descInput.dataset.id = imageItem.dataset.id;
+                            
+                            descSection.appendChild(descLabel);
+                            descSection.appendChild(descInput);
+                            
+                            imageItem.appendChild(img);
+                            imageItem.appendChild(removeBtn);
+                            imageItem.appendChild(descSection);
+                            imageGrid.appendChild(imageItem);
+                            
+                           
+                            uploadedImages.push({
+                                id: imageItem.dataset.id,
+                                name: file.name,
+                                data: e.target.result,
+                                type: file.type,
+                                description: ''
+                            });
+                            
+                            updateImageCount();
+                            updateSubmitButton();
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                });
+                
+                 
+                fileInput.value = '';
+            }
+        });
+ 
+        imageGrid.addEventListener('input', function(event) {
+            if (event.target.classList.contains('description-input')) {
+                const id = event.target.dataset.id;
+                const description = event.target.value;
+                
+                 
+                const image = uploadedImages.find(img => img.id === id);
+                if (image) {
+                    image.description = description;
+                }
+            }
+        });
+
+        function updateImageCount() {
+            const count = imageGrid.children.length;
+            imageCount.textContent = `${count} image${count !== 1 ? 's' : ''} uploaded`;
+        }
+            
+          
+    </script>
+        </div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<html>
+    <head>
+    <title> Music</title>
+    <link rel="stylesheet" href="style.css">
+    </head>
+
+<body>
+        <div class="main">
+            <div class="navbar">
+                <div class="icon">
+                    <h2 class="logo">RozieLib</h2>
+                </div>
+                <div class="menu">
+                    <ul>
+                        <li><a href="Home.html">Home</a></li>
+                        <li><a href="About.html">About</a></li>
+                        <li><a href="Contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>  
+             <div class="photo-color">
+                <h1> Music</h1>
+            </div>
+            <div class="insert">
+            <div class="card">
+              
+                <input type="file" accept="audio/mpeg, audio/wav, audio/ogg, audio/mp3" id="upload-audio" multiple>
+                <label for="upload-audio">🎵 Upload Audio Files</label>
+                <p class="upload-info">Select multiple audio files at once</p>
+            </div>
+            
+            <div class="audio-grid" id="audio-grid"></div>
+            <p class="audio-count" id="audio-count">0 audio files uploaded</p>
+            
+            
+        </div>
+    </div>
+
+    <script>
+        const audioInput = document.getElementById('upload-audio');
+        const audioGrid = document.getElementById('audio-grid');
+        const audioCount = document.getElementById('audio-count');
+        
+        
+        function updateCount() {
+            const count = audioGrid.children.length;
+            audioCount.textContent = count + ' audio file' + (count !== 1 ? 's' : '') + ' uploaded';
+        }
+
+        audioInput.addEventListener('change', function(event) {
+            const files = event.target.files;
+            
+            if (files.length > 0) {
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith('audio/')) {
+                        const reader = new FileReader();
+                        
+                        reader.onload = function(e) {
+                            createAudioItem(e.target.result, file);
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                });
+               
+                audioInput.value = '';
+            }
+        });
+
+        function createAudioItem(data, file) {
+            const audioItem = document.createElement('div');
+            audioItem.className = 'audio-item';
+
+            const audio = document.createElement('audio');
+            audio.controls = true;
+            audio.src = data; 
+            audio.style.width = "100%"; 
+
+            const typeBadge = document.createElement('span');
+            typeBadge.className = 'audio-type-badge';
+            typeBadge.textContent = '🎵 Audio';
+
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = '❌';
+            removeBtn.style.marginLeft = "10px";
+            removeBtn.onclick = function() {
+                audioItem.remove();
+                updateCount();
+            };
+
+     
+            audioItem.appendChild(typeBadge);
+            audioItem.appendChild(audio);
+            audioItem.appendChild(removeBtn);
+
+            
+            audioGrid.appendChild(audioItem);
+
+          
+            updateCount();
+        }
+    </script>
+</body>
+</html>
